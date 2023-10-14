@@ -29,6 +29,7 @@ button.addEventListener("click", (e) => {
   recognition.start();
   titleOnError.innerText = "";
   titleOnError.style.display = "none";
+
   let innerElementText = () => {
     titleOnStart.innerText =
       "hãy nói ra điều bạn muốn nói mà không nói cũng được";
@@ -90,7 +91,7 @@ containerHTML.append(OutputText);
 
     default:
 
-      if (text.includes("Google Maps") && text.includes("Vinhomes Smartcity Tây Mỗ")) {
+      if (text.includes("Google Maps") && text.includes("Vinhomes Smart city Tây Mỗ")) {
         window.open("https://www.google.com/maps/dir//21.0051413,105.7392555/@21.0051024,105.6569042,12z?entry=ttu","_blank");
     }
     else if (text.includes("Zing MP3") && text.includes("ai chung tình được mãi")) {
