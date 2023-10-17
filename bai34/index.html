@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="favicon.jpeg" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="Smatyx Todos App" />
+    <title>Smatyx Todos</title>
+    <script defer="defer" src="script.js"></script>
+   
+    <link href="main.css" rel="stylesheet" />
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <main id="root">
+      <div class="container flex min-h-screen items-center bg-gray-50">
+        <div
+          class="fixed bottom-0 left-0 right-0 top-0 z-50 flex items-center justify-center bg-gray-700/60 p-4"
+        >
+          <div class="w-full max-w-md">
+            <form class="rounded-lg bg-white shadow">
+              <div class="p-6">
+                <input
+                  required=""
+                  type="text"
+                  class="script-input-value w-full bg-gray-50 p-4 rounded-lg border border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                  placeholder="Add Todos"
+                  value=""
+                  fdprocessedid="axrxg"
+                />
+              </div>
+              <div
+                class="flex items-center justify-center space-x-8 p-4 rounded-b border-t border-gray-200"
+              >
+                <button
+                  type="submit"
+                  class="save rounded-lg bg-emerald-700 px-5 py-2.5 text-center font-medium text-white hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-300"
+                  fdprocessedid="uqxyen"
+                >
+                  Save</button
+                ><button
+                  type="button"
+                  class="exit bg-white px-5 py-2.5 rounded-lg border border-gray-200 font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200"
+                  fdprocessedid="a1tcyh"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="add-todo mx-auto w-full max-w-3xl px-4 py-6">
+          <h1 class="py-3 text-center text-4xl font-bold text-gray-900">
+            <span
+              class="bg-gradient-to-r from-blue-400 to-emerald-600 bg-clip-text text-transparent"
+              >Smatyx</span
+            >&nbsp;<span>Todos App</span>
+          </h1>
+          <div class="pt-5">
+            <div class="flex items-center gap-3">
+              <div class="relative w-full">
+                <input
+                  type="search"
+                  class="w-full bg-gray-50 p-4 rounded-lg border border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                  placeholder="Search Todos"
+                  value=""
+                /><button
+                  type="button"
+                  class="absolute bottom-2 right-2 top-2 rounded-lg bg-blue-700 px-4 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                  fdprocessedid="qsbrvv"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"
+                  >
+                    <path
+                      class="fill-white"
+                      d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+              <button
+                type="button" id="btn-add"
+                class="rounded-lg bg-emerald-700 px-4 py-2.5 font-medium text-white hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-300"
+                fdprocessedid="gmy5zf"
+              >
+                Add&nbsp;Todos
+              </button>
+            </div>
+           
+          </div>
+
+          <!--  -->
+          
+        </div>
+        <button
+        type="button"
+        class="completed bg-gray-400 hover:bg-gray-500 focus:ring-gray-100 mt-2.5 flex items-center gap-2 rounded-lg px-4 py-2.5 transition-all focus:outline-none focus:ring-4"
+        fdprocessedid="c9tmdd"
+      >
+        <span class="font-medium text-white">Completed Todos 1</span
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="-rotate-90 h-4 w-4 transition-all"
+          viewBox="0 0 512 512"
+        >
+          <path
+            class="fill-white"
+            d="M256 464a208 208 0 1 1 0-416 208 208 0 1 1 0 416zM256 0a256 256 0 1 0 0 512A256 256 0 1 0 256 0zM376.9 294.6c4.5-4.2 7.1-10.1 7.1-16.3c0-12.3-10-22.3-22.3-22.3H304V160c0-17.7-14.3-32-32-32l-32 0c-17.7 0-32 14.3-32 32v96H150.3C138 256 128 266 128 278.3c0 6.2 2.6 12.1 7.1 16.3l107.1 99.9c3.8 3.5 8.7 5.5 13.8 5.5s10.1-2 13.8-5.5l107.1-99.9z"
+          ></path>
+        </svg>
+      </button>
+      </div>
+    </main> 
+    <script defer="defer" src="createEl.js"></script>
+  </body>
+</html>
