@@ -1,0 +1,47 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+ul li {
+    list-style: none;
+}
+a{
+    text-decoration: none;
+}
+.container{
+    width: 800px;
+    height: auto;
+    margin: 0 auto;
+}
+.user{
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+.wrapper{
+    margin: 20px 0 40px 0;
+}
+.wrapper .avatar{
+    max-width: 40px;
+    border-radius: 99px;
+}
+.post{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: flex-end;
+}
+.flex-user{
+    display: flex;
+    justify-content: space-between;
+}
+.ul-setting{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.picture img{
+    max-width:100%;
+    min-height: 100%;
+}
