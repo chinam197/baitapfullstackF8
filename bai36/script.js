@@ -292,12 +292,13 @@ const app = {
             ++app.variableTime.True;
             item.removeEventListener("click", handleClickScore);
           } else {
-            if(valueAnswer === ValueButton){
-              item.style.background = "green";
-            }
+            
             check = false;
             item.style.background = "red";
             item.removeEventListener("click", handleClickScore);
+            if(valueAnswer === ValueButton){
+              item.style.background = "green";
+            }
           }
         };
         app.variableTime.False =
