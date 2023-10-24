@@ -4,7 +4,9 @@ const { PAGE_LIMIT } = config;
 const { SERVER_API } = config;
 const socialNetwork = {
   rootEl: document.querySelector(".container"),
-
+query : {
+_page :10,
+},
   render: function (user) {
     const stripHTML = (html) => html.replaceAll(/(<([^>]+)>)/gi, "");
     this.rootEl.innerHTML = `
@@ -47,12 +49,10 @@ const socialNetwork = {
       )
       .join("")}`;
   },
-  getUser: async function (page) {
+  getUser: async function (user) {
     let usersLength = await client.get("/users");
-    if (page === usersLength.data.length - 1) {
-      page = a.data.length;
-    }
-    const params = new URLSearchParams({ _limit: page });
+    
+    const params = new URLSearchParams({ _limit:this.query._page});
 
     const url = `https://svgncf-8080.csb.app/users?${params.toString()}`;
 
@@ -60,19 +60,17 @@ const socialNetwork = {
     const data = await response.json();
     this.render(data);
   },
-  infinityScroll(page) {
+  infinityScroll() {
     window.addEventListener("scroll", () => {
       if (window.scrollY + window.innerHeight >= document.body.offsetHeight) {
-        page+=5;
-        this.getUser(page);
+      let a = this.query._page++;
+      this.getUser(a)
       }
     });
   },
   start: function () {
-    let page = 10;
-
-    this.getUser(page);
-    this.infinityScroll(page);
+    this.getUser();
+    this.infinityScroll();
   },
 };
 socialNetwork.start();
