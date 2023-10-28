@@ -63,8 +63,8 @@ _page :10,
   infinityScroll() {
     window.addEventListener("scroll", () => {
       if (window.scrollY + window.innerHeight >= document.body.offsetHeight) {
-      let a = this.query._page++;
-      this.getUser(a)
+      
+     
       }
     });
   },

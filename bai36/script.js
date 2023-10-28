@@ -1,3 +1,5 @@
+"use strict";
+
 let rootEl = document.querySelector("#root");
 import { client } from "./client.js";
 
@@ -32,30 +34,21 @@ const app = {
  
        <p class="mb-0 animate__animated animate__zoomIn beginGame"></p>
        <audio>
-   <source
-        type="audio/mp3"
-        src="./mp3/AiLaTrieuPhu-VA_43vp2.mp3"
-      />
+   <source type="audio/mp3" src="./mp3/AiLaTrieuPhu-VA_43vp2.mp3"/>
       </audio>
   </div>
- 
-     
     `;
       let beginGame = document.querySelector(".beginGame");
-      let downNumber = 6;
+      let downNumber = 4;
       setInterval(() => {
-        beginGame.innerText = downNumber;
-        if (downNumber) {
-          if (downNumber >= 0) {
-            beginGame.innerText = --downNumber;
-            if (downNumber === 0) {
-              beginGame.innerText = "Go";
-
-              setTimeout(() => {
-                requestAnimationFrame(app.startTime);
-                app.getConclusiveAnswer();
-              }, 1000);
-            }
+        if (downNumber >= 0) {
+          beginGame.innerText = --downNumber;
+          if (downNumber < 0) {
+            beginGame.innerText = "Go";
+            setTimeout(() => {
+              requestAnimationFrame(app.startTime);
+              app.getConclusiveAnswer();
+            }, 1000);
           }
         }
       }, 1000);
@@ -75,25 +68,26 @@ const app = {
       app.variableTime;
     let value = getIndex;
     ++value;
+    if (typeof data[getIndex] === "object") {
+      const { title, answer1, answer2, answer3, answer4 } = data[getIndex];
 
-    const { title, answer1, answer2, answer3, answer4 } = data[getIndex];
+      app.renderConclusiveAnswer(
+        title,
+        answer1,
+        answer2,
+        answer3,
+        answer4,
+        streak,
+        score,
+        value,
+        dataLength,
+        True,
+        False
+      );
+      app.handleClick(data, Index);
 
-    app.renderConclusiveAnswer(
-      title,
-      answer1,
-      answer2,
-      answer3,
-      answer4,
-      streak,
-      score,
-      value,
-      dataLength,
-      True,
-      False
-    );
-    app.handleClick(data, Index);
-
-    app.variableTime.getIndex++;
+      app.variableTime.getIndex++;
+    }
   },
   variableTime: {
     prevTime: 0,
@@ -111,6 +105,7 @@ const app = {
   },
   startTime: (currentTime) => {
     let { streak, score, True, False } = app.variableTime;
+    let { progressWidth } = app.progressValue;
     if (app.variableTime.timer <= currentTime) {
       app.variableTime.timer = currentTime + app.variableTime.INTERVARL;
       app.variableTime.counter--;
@@ -140,6 +135,8 @@ const app = {
       }
     }
   },
+  progressValue: {},
+
   renderConclusiveAnswer: (
     title,
     answer1,
@@ -153,8 +150,6 @@ const app = {
   ) => {
     if (index <= dataLength) {
       rootEl.querySelector(".App .quizizzGame").innerHTML = `
-    
-    
 <div class="quizizzGame__question h-100">
 <div class="row h-100">
   <div class="col-12 quizizzGame__top">
@@ -271,6 +266,8 @@ const app = {
 
   `;
     }
+    let progress = rootEl.querySelector(".quizizzGame__top--timer-progress");
+    app.progressValue.progressWidth = progress.clientWidth;
   },
 
   handleClick: (data, index) => {
@@ -279,25 +276,32 @@ const app = {
       .querySelectorAll(".quizizzGame__answer--item-inner")
 
       .forEach((item, i) => {
-        
         let handleClickScore = function () {
           let ValueButton = item.textContent.trim();
-          let valueAnswer = data[index].answerTrue.trim();
-
-          if (valueAnswer === ValueButton && check) {
-            //style
-            item.style.background = "green";
+          let { answerTrue } = data[index];
+          if (answerTrue.trim() === ValueButton && check) {
+            function style() {
+              item.style.background = "#AAFFA9";
+              rootEl.querySelector(".quizizzGame__result").style.background =
+                "#AAFFA9";
+            }
+            style();
             app.variableTime.checkVAlueTrue = true;
             app.variableTime.score += 300;
             ++app.variableTime.True;
             item.removeEventListener("click", handleClickScore);
           } else {
-            
+            function style() {
+              item.style.background = "#f85032";
+              item.removeEventListener("click", handleClickScore);
+              rootEl.querySelector(".quizizzGame__result").style.background =
+                "#AAFFA9";
+            }
             check = false;
-            item.style.background = "red";
-            item.removeEventListener("click", handleClickScore);
-            if(valueAnswer === ValueButton){
-              item.style.background = "green";
+            style();
+            if (answerTrue.trim() === ValueButton) {
+              item.style.background = "#AAFFA9";
+              console.log("hello");
             }
           }
         };
@@ -305,7 +309,6 @@ const app = {
           app.variableTime.dataLength - app.variableTime.True;
         app.variableTime.percentageCorrectAnswers =
           app.variableTime.False / 100;
-
         item.addEventListener("click", handleClickScore);
       });
   },
