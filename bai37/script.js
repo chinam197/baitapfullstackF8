@@ -6,9 +6,6 @@ client.setUrl(SERVER_API_AUTH);
 
 const app = {
   root: document.querySelector("#root"),
-  //   btnSignIn:document.querySelector(".sign-up"),
-  //   btnSignUp:document.querySelector(".sign-in"),
-
   PageLimit: {
     page: 1,
     limit: 10,
@@ -121,7 +118,7 @@ const app = {
     this.btnSignIn = document
       .querySelector(".sign-up")
       ?.addEventListener("click", () => {
-    console.log(3);
+        console.log(3);
 
         _this.checkLoging = false;
         _this.render();
@@ -129,7 +126,7 @@ const app = {
     this.btnSignUp = document
       .querySelector(".sign-in")
       ?.addEventListener("click", () => {
-    console.log(4);
+        console.log(4);
 
         _this.checkLoging = true;
         _this.render();
@@ -137,7 +134,7 @@ const app = {
   },
   addEvent: function () {
     console.log(5);
-    
+
     let _this = this;
     this.root.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -162,6 +159,10 @@ const app = {
         const password = createPasswordEl.value;
 
         _this.signUp({ name, email, password });
+
+        createEmailEl.value = "";
+        createNameEl.value = "";
+        createPasswordEl.value = "";
       }
       if (e.target.classList.contains("news")) {
         const titleEL = e.target.querySelector(".title");
@@ -171,9 +172,9 @@ const app = {
         const title = titleEL.value;
         const content = contentEl.value;
         _this.postNews({ title, content });
-       titleEL.value="";
-       contentEl.value="";
-       timeValueEl.value="";
+        titleEL.value = "";
+        contentEl.value = "";
+        timeValueEl.value = "";
       }
     });
 
@@ -186,7 +187,7 @@ const app = {
   },
   loading: function (status = true, btn = "") {
     console.log(6);
-    
+
     const button = this.root.querySelector(".btn");
 
     if (status) {
@@ -203,15 +204,11 @@ const app = {
     }
   },
   showError: function (msgText) {
-    console.log(7);
-
     const msg = this.root.querySelector(".login .msg");
     msg.innerText = ``;
     msg.innerText = msgText;
   },
   signUp: async function (data) {
-    console.log(8);
-
     this.loading(true, "btn-new-account");
     try {
       const { response, data: token } = await client.post(
@@ -229,8 +226,6 @@ const app = {
   },
 
   login: async function (data) {
-    console.log(9);
-
     this.loading(true, "btn"); //Thêm loading
     try {
       //Call API
@@ -247,12 +242,11 @@ const app = {
 
       this.render();
     } catch (e) {
+      console.log("hello");
       this.showError(e.message);
     }
   },
   getProfile: async function () {
-    console.log(10);
-
     try {
       let token = localStorage.getItem("login");
 
@@ -262,21 +256,19 @@ const app = {
         const { data } = JSON.parse(token);
         accessToken = data.accessToken;
         refreshToken = data.refreshToken;
-        localStorage.setItem("refreshToken",refreshToken);
-        localStorage.setItem("accessToken",accessToken)
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("accessToken", accessToken);
       }
-    
 
       if (!accessToken) {
         throw new Error("accessToken not null");
       }
-       
-      client.setToken(accessToken);    
-                   
+
+      client.setToken(accessToken);
+
       const { response } = await client.get("/users/profile");
 
       if (!response.ok) {
-        
       }
       let user = localStorage.getItem("login");
       const { data } = JSON.parse(user);
@@ -288,8 +280,6 @@ const app = {
     }
   },
   logout: function () {
-    console.log(11);
-
     localStorage.removeItem("login");
     localStorage.removeItem("Users_post");
     this.render();
@@ -364,29 +354,32 @@ const app = {
       }
     } catch (e) {
       if (e.message) {
-    console.log(13);
-
         this.logout();
       }
     }
   },
-postNews: async function (value) {
-    let {response,data} = await client.post("/blogs", value);
-    console.log(response);
-    console.log(14);
-
+  postNews: async function (data) {
+    let { response } = await client.post("/blogs", data);
+    try {
+      if (!response.ok) {
+        throw new Error("Error post");
+      }
+      this.getUsers();
+      this.render();
+    } catch (e) {
+      console.log("");
+    }
   },
-refreshToken: async function(){
-
-
-},
 
   checkScroll: true,
   infinityScroll: function () {
     let _this = this;
 
     window.addEventListener("scroll", () => {
-      if (window.scrollY + window.innerHeight + 0.5 >= document.body.offsetHeight) {
+      if (
+        window.scrollY + window.innerHeight + 0.5 >=
+        document.body.offsetHeight
+      ) {
         _this.PageLimit.page++;
         let page = new URLSearchParams(_this.PageLimit);
         page = page.toString();
@@ -395,15 +388,14 @@ refreshToken: async function(){
       }
     });
   },
-  
+
   start: function () {
     this.render();
     this.addEvent();
     this.getUsers();
     this.getProfile();
     this.infinityScroll();
-    console.log(15);
-
+    this.postNews();
   },
 };
 
