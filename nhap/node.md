@@ -98,7 +98,7 @@ const app = {
   
               <div class="wrapper wrapper-time">
                   <label for="time">Set time to posts!</label>
-                  <input type="text" class="time">
+                  <input type="date" class="time">
               </div>
    <button class="submit btn btn-outline-info">Write New!</button>
           </form>
@@ -313,12 +313,12 @@ const app = {
   getProfile: async function () {
     try {
       let token = localStorage.getItem("login_token");
-      let accessToken;
+      let accessToken=null;
       if (token) {
         accessToken = JSON.parse(token).data.accessToken;
       }
 
-      if (!accessToken) {
+      if (!accessToken){
         throw new Error("accessToken not null");
       }
       client.setToken(accessToken);
@@ -327,17 +327,17 @@ const app = {
       this.root.querySelector(".profile ul li h5").innerText = user.data.name;
       this.getPost();
       if(response.status===401){
-        this.refreshToken(false, this.getProfile);
+        this.refreshToken(accessToken, this.getProfile);
         return;
       }
 
       if (!response.ok) {
-        this.refreshToken(false, this.getProfile);
+        this.refreshToken(accessToken, this.getProfile);
         return;
       }
     } catch (e) {
       if (e.message) {
-        this.refreshToken(false, this.getProfile);
+      
       }
     }
   },
@@ -358,6 +358,13 @@ const app = {
     let accessToken = null;
     if(accessTokenUser){
       accessToken = localStorage.parse(accessTokenUser).data.accessToken;
+    }
+    if(!accessToken){
+      accessToken = client.setToken;
+    localStorage.setItem("login_token",{
+      accessToken : accessToken
+    });
+      
     }
     if(response.ok){
     this.loading(false, "btn-outline-info");
@@ -385,33 +392,18 @@ const app = {
     });
   },
 
-  refreshToken: async function (setNewToken = false, callback = () => {}) {
-    try {
-      let userData = localStorage.getItem("login_token");
-      let refreshToken = JSON.parse(userData).refreshToken;
+  refreshToken: async function (refreshToken,callback=()=>{}) {
+     
       const { response, data: newToken } = await client.post(
         "/auth/refresh-token",
         {
-          refreshToken: refreshToken,
+          "refreshToken" : refreshToken,
         }
+        
       );
-
-      if (!response.ok) {
-        this.refreshToken(setNewToken, callback);
-      }
-
-      const jsonToken = JSON.stringify(newToken.data.token);
-
-      localStorage.setItem("login_token", jsonToken);
-      callback();
-
-      if (setNewToken) {
-        const accessToken = newToken.data.token.accessToken;
-        client.setToken(accessToken);
-      }
-    } catch (error) {
-      this.logout();
-    }
+      console.log(newToken);
+      
+     
   },
 
   start: function () {
