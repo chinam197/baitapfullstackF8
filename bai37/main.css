@@ -1,4 +1,5 @@
 *{
+    padding: 0;
     box-sizing: border-box;
     list-style: none;
 }
@@ -97,4 +98,11 @@ height:200px;
 .list-unstyled{
     display: flex;
     flex-direction: column;
+}
+
+.Loading_background{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    translate: -100% -100%;
 }
