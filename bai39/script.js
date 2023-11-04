@@ -439,10 +439,6 @@ const app = {
       
        
     }catch(e){
-      
-      localStorage.removeItem("token_user");
-      localStorage.removeItem("posts_user");
-      localStorage.removeItem("login_token");
       this.render();
     }
     
