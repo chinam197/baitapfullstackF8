@@ -239,26 +239,29 @@ const app = {
     }
 
   }
-  ,regex :function(content){
-  let div = document.createElement("div");
+  ,
+//   regex :function(content){
+//   let div = document.createElement("div");
 
-    let handleRegexPhone = function(){
+//     let handleRegexPhone = function(){
+//      let pattern = /(?:\+84|0)\d{9,11}/;
+//      return pattern.
      
-    }
+//     }
     
-    let handleRegexLink = function(){
+//     let handleRegexLink = function(){
 
-    }
-    let handleRegexYtb = function(){
+//     }
+//     let handleRegexYtb = function(){
 
-    }
-
-
+//     }
 
 
 
-}
-,
+
+
+// }
+// ,
   getPost: async function (pages) {
 
     try {
@@ -280,7 +283,7 @@ const app = {
           let { content, title, userId, timeUp } = item;
           let { name } = userId;
           const dateObject = new Date(timeUp);
-          this.regex(content);
+          // this.regex(content);
           const patternLink =
             /^(http|https):\/\/([a-z0-9][a-z0-9-_\.]*\.|)[a-z0-9][a-z0-9-_\.]*\.[a-z]{2,}(:\d{2,}|)(\/*|\/[^\s]+)$/;
           const patternMail = /^[\w\.-]{3,}@[\w\.-]{1,}\.[a-z]{2,}$/;

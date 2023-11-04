@@ -7,7 +7,7 @@ client.setUrl(SERVER_API_AUTH);
 const app = {
   root: document.querySelector("#root"),
   isLogin: function () {
-    const status = localStorage.getItem("token_user") ? true : false;
+    const status = localStorage.getItem("login_token") ? true : false;
 
     return status;
   },
@@ -224,10 +224,6 @@ const app = {
         throw new Error("Email hoặc mật khẩu không hợp lệ");
       }
       //Thêm token vào Storage (localStorage)
-      let accessToken = token.data.accessToken;
-      let refreshToken = token.data.refreshToken;
-      
-      localStorage.setItem("token_user",JSON.stringify({accessToken,refreshToken}));
       localStorage.setItem("login_token", JSON.stringify(token));
       this.getProfile();
       this.infinityScroll();
@@ -237,30 +233,8 @@ const app = {
       this.showError(e.message);
       this.logout();
     }
-
-  }
-  ,regex :function(content){
-  let div = document.createElement("div");
-
-    let handleRegexPhone = function(){
-     
-    }
-    
-    let handleRegexLink = function(){
-
-    }
-    let handleRegexYtb = function(){
-
-    }
-
-
-
-
-
-}
-,
+  },
   getPost: async function (pages) {
-
     try {
       let page = "?page=1&limit=10";
       if (pages) {
@@ -280,7 +254,6 @@ const app = {
           let { content, title, userId, timeUp } = item;
           let { name } = userId;
           const dateObject = new Date(timeUp);
-          this.regex(content);
           const patternLink =
             /^(http|https):\/\/([a-z0-9][a-z0-9-_\.]*\.|)[a-z0-9][a-z0-9-_\.]*\.[a-z]{2,}(:\d{2,}|)(\/*|\/[^\s]+)$/;
           const patternMail = /^[\w\.-]{3,}@[\w\.-]{1,}\.[a-z]{2,}$/;
@@ -303,6 +276,7 @@ const app = {
 
             if (pattern1.test(content)) {
               content = content.replace(pattern1, embed);
+              console.log(content);
             } else {
               content = content.replace(pattern2, embed);
             }
@@ -321,7 +295,7 @@ const app = {
             numberPhone.href = "tel:" + `${content}`;
             numberPhone.target = "_blank";
             numberPhone.innerText = content;
-           
+            console.log(numberPhone.outerHTML);
 
             append = numberPhone.outerHTML;
           } else {
@@ -377,16 +351,17 @@ const app = {
         });
       }
     } catch (e) {
-           this.render();
+      this.root.innerHTML = `<div class="spinner-border m-5 Loading_background" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div>`;
     }
   },
-  getProfile: async function () { 
-    let accessToken;
+  getProfile: async function () {
     try {
-      let token = localStorage.getItem("token_user");
-     
+      let token = localStorage.getItem("login_token");
+      let accessToken;
       if (token) {
-        accessToken = JSON.parse(token).accessToken;       
+        accessToken = JSON.parse(token).data.accessToken;
       }
 
       if (!accessToken) {
@@ -394,93 +369,46 @@ const app = {
       }
       client.setToken(accessToken);
       const { response, data: user } = await client.get("/users/profile");
-      if(response.status === 401){
-       this.refreshToken(this.getProfile);
-      return;
-      } 
-      if (!response.ok) {
-       this.refreshToken( this.getProfile);
-        return;
-      }
       this.root.querySelector("ul .name").innerText = user.data.name;
       this.root.querySelector(".profile ul li h5").innerText = user.data.name;
       this.getPost();
-      
-     
+      if (response.status === 401) {
+        this.refreshToken(false, this.getProfile);
+        return;
+      }
+
+      if (!response.ok) {
+        this.refreshToken(false, this.getProfile);
+        return;
+      }
     } catch (e) {
-      
+      if (e.message) {
+        this.refreshToken(false, this.getProfile);
+      }
     }
   },
-  logout: async function () {
-    let token = localStorage.getItem("token_user");
-      let accessToken;
-      if (token) {
-        accessToken = JSON.parse(token).accessToken;
-      }
-    try{
-      client.setToken(accessToken);
-      const { response, data } = await client.post("/auth/logout");
-      if(response.status === 401){
-        localStorage.removeItem("token_user");
-        localStorage.removeItem("posts_user");
-        localStorage.removeItem("login_token");
-        this.render();
-      }
-     if(response.ok){
-     localStorage.removeItem("token_user");
-      localStorage.removeItem("posts_user");
-      localStorage.removeItem("login_token");
-      this.render();
-     }
-
-      
-       
-    }catch(e){
-      
-      localStorage.removeItem("token_user");
-      localStorage.removeItem("posts_user");
-      localStorage.removeItem("login_token");
-      this.render();
-    }
-    
-
-     
-
-     
+  logout: function () {
+    // const { response } =client.post("/auth/logout", {});
+    localStorage.removeItem("login_token");
+    localStorage.removeItem("posts_user");
+    this.render();
   },
   page_Limit: {
     page: 1,
-    limit: 10,
+    limit: 20,
   },
   postNew: async function (value) {
-    
-    try{
-      this.loading(true, "btn-outline-info");
+    this.loading(true, "btn-outline-info");
     const { response, data: blog } = await client.post("/blogs", value);
-   
-    let accessTokenUser = localStorage.getItem("token_user");
+    let accessTokenUser = localStorage.getItem("login_token");
     let accessToken = null;
-    
-   if(accessTokenUser){
-   accessToken = JSON.parse(accessTokenUser).accessToken;
-   }
-   
- if (response.ok) {
+    if (accessTokenUser) {
+      accessToken = localStorage.parse(accessTokenUser).data.accessToken;
+    }
+    if (response.ok) {
       this.loading(false, "btn-outline-info");
-      this.getPost();
-      this.getProfile();
-      this.render();
+    } else {
     }
-     if(!response.ok) {
-     await this.refreshToken(this.getProfile);
-      this.render();  
-    }
-
-    }catch(e){
-
-    }
-    
-   
   },
 
   checkScroll: true,
@@ -501,58 +429,40 @@ const app = {
     });
   },
 
-  refreshToken: async function (callback=()=>{}) {
-
+  refreshToken: async function (setNewToken = false, callback = () => {}) {
     try {
-      let userData = localStorage.getItem("token_user");
-      let refreshToken=null;
-    if(userData){
-      refreshToken = JSON.parse(userData).refreshToken;
-    }
-      
+      let userData = localStorage.getItem("login_token");
+      let refreshToken = JSON.parse(userData).refreshToken;
       const { response, data: newToken } = await client.post(
         "/auth/refresh-token",
         {
-          refreshToken,
+          refreshToken: refreshToken,
         }
-      );    
+      );
+
       if (!response.ok) {
-      callback();
-      this.getPost();
-      this.render();
+        this.refreshToken(setNewToken, callback);
       }
-    
+
       const jsonToken = JSON.stringify(newToken.data.token);
-      
-      localStorage.setItem("token_user", jsonToken);
+
+      localStorage.setItem("login_token", jsonToken);
       callback();
-      this.getPost();
-      this.getProfile();
-      this.render();
-      if (refreshToken) {
+
+      if (setNewToken) {
         const accessToken = newToken.data.token.accessToken;
         client.setToken(accessToken);
       }
     } catch (error) {
-     this.logout();
+      this.logout();
     }
   },
-message:function(){
-  let div = document.createElement("div");
-  div.innerHTML = `<div class="notification">
-<div class="message">Hello</div>
-<div class="title">đã đăng xuất thành công</div>
-</div>`;
-document.body.prepend(div);
-}
-  ,
 
   start: function () {
     //Khởi động ứng dụng
     this.render();
     this.addEvent();
     this.getProfile();
-    this.infinityScroll();
   },
 };
 
